@@ -26,3 +26,8 @@ from (select pch.*, p.StandardCost as cost from Production.ProductCostHistory pc
     where ps.Name = 'Tires and Tubes')) pch
 
 commit
+
+select * from Production.Product p
+join Production.ProductSubcategory ps
+on p.ProductSubcategoryID = ps.ProductSubcategoryID
+where ps.Name = 'Tires and Tubes'
