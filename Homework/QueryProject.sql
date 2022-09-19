@@ -32,16 +32,45 @@ order by soh.OrderDate
 -- 3. Create a query that list each customer, the date of their first sale, the date of their most recent sale, and the total amount spent on all orders.
 -- Include the details about the first and last orders on the same row (sales order number, totals, and shipped date). Use window functions for this
 
-select
-    c.CustomerID,
-    first_value(soh.SalesOrderID) over (partition by soh.CustomerID order by soh.OrderDate)
-from Sales.Customer c
-    left join Sales.SalesOrderHeader soh
-    on c.CustomerID = soh.CustomerID
+select distinct
+    soh.CustomerID,
+    format(first_value(soh.OrderDate) over (partition by soh.CustomerID order by soh.OrderDate), 'M/d/yyyy') FirstOrderDate,
+    first_value(soh.SalesOrderNumber) over (partition by soh.CustomerID order by soh.OrderDate) FirstOrderSalesOrderNumber,
+    format(first_value(soh.SubTotal) over (partition by soh.CustomerID order by soh.OrderDate), 'c') FirstOrderSubtotal,
+    format(first_value(soh.ShipDate) over (partition by soh.CustomerID order by soh.OrderDate), 'M/d/yyyy') FirstOrderShippedDate,
+    format(last_value(soh.OrderDate) over (
+        partition by soh.CustomerID
+        order by soh.OrderDate
+        rows between unbounded preceding and unbounded following
+        ), 'M/d/yyyy') MostRecentOrderDate,
+    last_value(soh.SalesOrderNumber) over (
+        partition by soh.CustomerID
+        order by soh.OrderDate
+        rows between unbounded preceding and unbounded following
+        ) MostRecentOrderSalesOrderNumber,
+    format(last_value(soh.SubTotal) over (
+        partition by soh.CustomerID
+        order by soh.OrderDate
+        rows between unbounded preceding and unbounded following
+        ), 'c') MostRecentOrderSubtotal,
+    format(last_value(soh.ShipDate) over (
+        partition by soh.CustomerID
+        order by soh.OrderDate
+        rows between unbounded preceding and unbounded following
+        ), 'M/d/yyyy') MostRecentOrderShippedDate,
+    format(sum(soh.SubTotal) over ( partition by soh.CustomerID ), 'c') TotalAmountSpent
+from Sales.SalesOrderHeader soh
+
 
 -- 4. Re-write #3 using subqueries instead.
 
-
+select distinct
+    soh.CustomerID,
+    (select top 1 format(soh.OrderDate, 'M/d/yyyy')
+     from Sales.SalesOrderHeader soh
+     where CustomerID = soh.CustomerID
+     order by soh.OrderDate) FirstOrderDate
+from Sales.SalesOrderHeader soh
 
 -- 5. Re-write #3 using the apply operator instead.
 
