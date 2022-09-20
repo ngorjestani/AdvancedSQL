@@ -1,12 +1,17 @@
 -- 1. Create a query that displays the total dollar amount of sales before tax/freight for each month and year (ie, Jan 2020, Feb 2020, etc). Months should sort in calendar order.
-
-select
-    month(soh.OrderDate) Month,
-    year(soh.OrderDate) Year,
-    format(sum(soh.SubTotal), 'c') MonthlySales
+with SalesByMonth as
+(
+select format(soh.OrderDate, 'MMM yyyy') as MonthYear, month(soh.OrderDate) Month, year(soh.OrderDate) Year, sum(soh.SubTotal) as MonthlySales
 from Sales.SalesOrderHeader soh
-group by year(soh.OrderDate), month(soh.OrderDate)
-order by year(soh.OrderDate), month(soh.OrderDate)
+group by format(soh.OrderDate, 'MMM yyyy'), month(soh.OrderDate), year(soh.OrderDate)
+)
+
+-- ****************** Main Query *******************
+
+select SalesByMonth.MonthYear, format(SalesByMonth.MonthlySales, 'c') MonthlySales
+from SalesByMonth
+group by SalesByMonth.MonthYear, SalesByMonth.MonthlySales, SalesByMonth.Year, SalesByMonth.Month
+order by SalesByMonth.Year, SalesByMonth.Month
 
 
 -- 2. Create a query for an invoicing report that lists all of a customer’s orders (order #, date, subtotal, tax, freight, and total due), and has a running total of the total due field.
@@ -64,13 +69,14 @@ from Sales.SalesOrderHeader soh
 
 -- 4. Re-write #3 using subqueries instead.
 
-select distinct
-    soh.CustomerID,
-    (select top 1 format(soh.OrderDate, 'M/d/yyyy')
-     from Sales.SalesOrderHeader soh
-     where CustomerID = soh.CustomerID
-     order by soh.OrderDate) FirstOrderDate
+select
+    soh.CustomerID
 from Sales.SalesOrderHeader soh
+join (select top 1 *
+      from Sales.SalesOrderHeader soh
+      where CustomerID = soh.CustomerID
+      order by soh.OrderDate) FirstOrder
+on soh.CustomerID = FirstOrder.CustomerID
 
 -- 5. Re-write #3 using the apply operator instead.
 
