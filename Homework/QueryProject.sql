@@ -69,17 +69,72 @@ from Sales.SalesOrderHeader soh
 
 -- 4. Re-write #3 using subqueries instead.
 
-select
-    soh.CustomerID
+-- first order number
+select top 1 soh.SalesOrderID
 from Sales.SalesOrderHeader soh
-join (select top 1 *
-      from Sales.SalesOrderHeader soh
-      where CustomerID = soh.CustomerID
-      order by soh.OrderDate) FirstOrder
-on soh.CustomerID = FirstOrder.CustomerID
+where soh.CustomerID = 11000
+order by soh.OrderDate
+
+-- last order number
+select top 1 soh.SalesOrderID
+from Sales.SalesOrderHeader soh
+where soh.CustomerID = 11000
+order by soh.OrderDate desc
+
+-- first order info
+select
+    format(soh.OrderDate, 'M/d/yyyy') FirstOrderDate,
+    soh.SalesOrderNumber FirstOrderSalesOrderNumber,
+    format(soh.SubTotal, 'c') FirstOrderSubtotal,
+    format(soh.ShipDate, 'M/d/yyyy') FirstOrderShipDate
+from Sales.SalesOrderHeader soh
+
+where soh.SalesOrderID = (select top 1 soh.SalesOrderID
+    from Sales.SalesOrderHeader soh
+    where soh.CustomerID = 11000
+    order by soh.OrderDate)
+
+-- last order info
+select
+    format(soh.OrderDate, 'M/d/yyyy') FirstOrderDate,
+    soh.SalesOrderNumber FirstOrderSalesOrderNumber,
+    format(soh.SubTotal, 'c') FirstOrderSubtotal,
+    format(soh.ShipDate, 'M/d/yyyy') FirstOrderShipDate
+from Sales.SalesOrderHeader soh
+where soh.SalesOrderID = (select top 1 soh.SalesOrderID
+from Sales.SalesOrderHeader soh
+where soh.CustomerID = 11000
+order by soh.OrderDate desc)
+
+-- select from sales orders grouped by customer
+select *
+from Sales.Customer c
+    join (select top 1 soh.SalesOrderID, soh.CustomerID
+    from Sales.SalesOrderHeader soh
+    where soh.CustomerID = CustomerID
+    order by soh.OrderDate) FirstOrder
+    on c.CustomerID = FirstOrder.CustomerID
+
+-- I couldn't get anything to work using subqueries for this
 
 -- 5. Re-write #3 using the apply operator instead.
 
+select *
+from Sales.SalesOrderHeader soh
+cross apply (select
+        format(soh.OrderDate, 'M/d/yyyy') FirstOrderDate,
+        soh.SalesOrderNumber FirstOrderSalesOrderNumber,
+        format(soh.SubTotal, 'c') FirstOrderSubtotal,
+        format(soh.ShipDate, 'M/d/yyyy') FirstOrderShipDate
+    from Sales.SalesOrderHeader soh
 
+    where soh.SalesOrderID = (select top 1 soh.SalesOrderID
+        from Sales.SalesOrderHeader soh
+        where soh.CustomerID = CustomerID
+        order by soh.OrderDate)) FirstOrder
+
+-- Can't figure out how to get any subqueries or cross applies to work across all rows
 
 -- 6. Compare the executions plans of #'s 3, 4, & 5. How do they compare? Which query produces a plan that is more optimal? Why?
+
+-- couldn't get any subqueries or cross applies to work so I have nothing to compare to the window functions
