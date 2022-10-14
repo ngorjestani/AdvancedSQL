@@ -1,0 +1,92 @@
+<Resume>
+  <Name>
+    <Prefix>Mr.</Prefix>
+    <First>Stephen</First>
+    <Middle>Y </Middle>
+    <Last>Jiang</Last>
+    <Suffix></Suffix>
+  </Name>
+  <Employment>
+    <StartDate>1998-03-01Z</StartDate>
+    <EndDate>2000-12-30Z</EndDate>
+    <OrgName>Wide World Imports</OrgName>
+    <JobTitle>Sales Manager</JobTitle>
+    <Responsibility> Managed a sales force of 20 sales representatives and 5 support staff distributed across 5 states. Also managed relationships with vendors for lead generation.
+Lead the effort to leverage IT capabilities to improve communication with the field. Improved lead-to-contact turnaround by 15 percent. Did all sales planning and forecasting. Re-mapped territory assignments for maximum sales force productivity. Worked with marketing to map product placement to sales strategy and goals. 
+Under my management, sales increased 10% per year at a minimum.
+        </Responsibility>
+    <FunctionCategory>Sales</FunctionCategory>
+    <IndustryCategory>Import/Export</IndustryCategory>
+    <Location>
+      <Location>
+        <CountryRegion>US </CountryRegion>
+        <State>WA </State>
+        <City>Renton</City>
+      </Location>
+    </Location>
+  </Employment>
+  <Employment>
+    <StartDate>1992-06-14Z</StartDate>
+    <EndDate>1998-06-01Z</EndDate>
+    <OrgName>Fourth Coffee</OrgName>
+    <JobTitle>Sales Associater</JobTitle>
+    <Responsibility>Selling product to supermarkets and cafes. Worked heavily with value-add techniques to increase sales volume, provide exposure to secondary products.
+Skilled at order development. Observed and built relationships with buyers that allowed me to identify opportunities for increased traffic.
+        </Responsibility>
+    <FunctionCategory>Sales</FunctionCategory>
+    <IndustryCategory>Food and Beverage</IndustryCategory>
+    <Location>
+      <Location>
+        <CountryRegion>US </CountryRegion>
+        <State>WA </State>
+        <City>Spokane</City>
+      </Location>
+    </Location>
+  </Employment>
+  <Education>
+    <Level>Bachelor</Level>
+    <StartDate>1986-09-15Z</StartDate>
+    <EndDate>1990-05-20Z</EndDate>
+    <Degree>Bachelor of Arts and Science</Degree>
+    <Major>Business</Major>
+    <Minor></Minor>
+    <GPA>3.3</GPA>
+    <GPAScale>4</GPAScale>
+    <School>Louisiana Business College of New Orleans</School>
+    <Location>
+      <Location>
+        <CountryRegion>US </CountryRegion>
+        <State>LA</State>
+        <City>New Orleans</City>
+      </Location>
+    </Location>
+  </Education>
+  <Address>
+    <Type>Home</Type>
+    <Street>30 151st Place SE</Street>
+    <Location>
+      <Location>
+        <CountryRegion>US </CountryRegion>
+        <State>WA </State>
+        <City>Redmond</City>
+      </Location>
+    </Location>
+    <PostalCode>98052</PostalCode>
+    <Telephone>
+      <Telephone>
+        <Type>Voice</Type>
+        <IntlCode>1</IntlCode>
+        <AreaCode>425</AreaCode>
+        <Number>555-1119</Number>
+      </Telephone>
+      <Telephone>
+        <Type>Voice</Type>
+        <IntlCode>1</IntlCode>
+        <AreaCode>425</AreaCode>
+        <Number>555-1981</Number>
+      </Telephone>
+    </Telephone>
+  </Address>
+  <EMail>Stephen@example.com</EMail>
+  <WebSite></WebSite>
+</Resume>
