@@ -4,18 +4,57 @@
 -- Include a root element, and ensure that all fields are elements other than the OrderID – this should be an attribute. Make sure that each order only shows up once.
 -- Only include the 5 most recent orders.
 
-select soh.SalesOrderID,
-       soh.OrderDate,
-       soh.DueDate,
-       soh.PurchaseOrderNumber,
-       soh.CustomerID,
-       soh.SubTotal,
-       soh.TaxAmt,
-       soh.Freight,
-       soh.SubTotal + soh.TaxAmt + soh.Freight as Total
+select soh.SalesOrderID as SalesOrderId,
+       soh.OrderDate as OrderDate,
+       soh.DueDate as DueDate,
+       soh.PurchaseOrderNumber as OrderNumber,
+       soh.CustomerID as CustomerId,
+       soh.SubTotal as Subtotal,
+       soh.TaxAmt as Tax,
+       soh.Freight as Freight,
+       soh.SubTotal + soh.TaxAmt + soh.Freight as Total,
+       (
+        select p.ProductID as ID,
+               p.Name as Name,
+               sod.OrderQty as Quantity,
+               sod.UnitPrice as UnitPrice,
+               sod.UnitPriceDiscount as UnitDiscount
+        from Sales.SalesOrderHeader soh
+            join Sales.SalesOrderDetail sod
+                on soh.SalesOrderID = sod.SalesOrderID
+            join Production.Product p
+                on sod.ProductID = p.ProductID
+        for xml path('Product')
+        ) as Products
 from Sales.SalesOrderHeader soh
+for xml path('Order'), root('Orders')
 
 -- Same as #1, but use JSON. Make the products be a nested object. Make sure that each order only shows up once.
+
+select top 10 soh.SalesOrderID as SalesOrderId,
+       soh.OrderDate as OrderDate,
+       soh.DueDate as DueDate,
+       soh.PurchaseOrderNumber as OrderNumber,
+       soh.CustomerID as CustomerId,
+       soh.SubTotal as Subtotal,
+       soh.TaxAmt as Tax,
+       soh.Freight as Freight,
+       soh.SubTotal + soh.TaxAmt + soh.Freight as Total,
+       (
+        select p.ProductID as ID,
+               p.Name as Name,
+               sod.OrderQty as Quantity,
+               sod.UnitPrice as UnitPrice,
+               sod.UnitPriceDiscount as UnitDiscount
+        from Sales.SalesOrderHeader soh
+            join Sales.SalesOrderDetail sod
+                on soh.SalesOrderID = sod.SalesOrderID
+            join Production.Product p
+                on sod.ProductID = p.ProductID
+        for json path
+        ) as Products
+from Sales.SalesOrderHeader soh
+for json path, root
 
 -- Using the attached XMLDownload XML file, parse all the fields in the name and employment nodes. You will end up with multiple rows.
 
