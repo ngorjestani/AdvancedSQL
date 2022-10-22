@@ -29,6 +29,21 @@ select soh.SalesOrderID as SalesOrderId,
 from Sales.SalesOrderHeader soh
 for xml path('Order'), root('Orders')
 
+-- Correct
+select top 5 soh.SalesOrderID '@Id',
+             soh.OrderDate,
+             soh.DueDate,
+             soh.PurchaseOrderNumber,
+             soh.CustomerID,
+             soh.SubTotal,
+             soh.TaxAmt,
+             soh.Freight,
+             soh.SubTotal + soh.TaxAmt + soh.Freight as Total,
+             (select
+              from Sales.SalesOrderDetail sod
+                 )
+from Sales.SalesOrderHeader soh
+
 -- Same as #1, but use JSON. Make the products be a nested object. Make sure that each order only shows up once.
 
 select top 10 soh.SalesOrderID as SalesOrderId,
