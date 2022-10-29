@@ -1,5 +1,4 @@
-declare @json nvarchar(max)
-select @json = '{
+{
     "SalesGoals": [
         {
             "SalesPerson": {
@@ -204,26 +203,4 @@ select @json = '{
             }
         }
     ]
-}'
-
-/*select sp.BusinessEntityID,
-       p.FirstName + ' ' + p.LastName name,
-       sp.SalesQuota,
-       sp.Bonus,
-       sp.CommissionPct
-from Sales.SalesPerson sp
-join Person.Person p on sp.BusinessEntityID = p.BusinessEntityID
-where sp.BusinessEntityID = 290
-
-select *
-from Sales.SalesPersonQuotaHistory*/
-
-select
-into #SalesBonusInfo
-from openjson(@json, '$.SalesGoals')
-              with (SalesPersonId int '$.SalesPerson.Id',
-                  CommissionPercent smallmoney '$.SalesPerson.CommissionPercent',
-                  GoalDate date '$.SalesGoal.GoalDate',
-                  QuarterlyGoal money '$.SalesGoal.QuarterlyGoal',
-                  SalesBonus money '$.SalesGoal.SalesBonus') as jsonData
-
+}
