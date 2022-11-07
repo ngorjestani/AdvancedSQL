@@ -206,24 +206,75 @@ select @json = '{
     ]
 }'
 
+/****************************************
+* Author: ngorjestani
+* Create Date: 11/6/2022
+*
+* This procedure takes a JSON file and updates the salesperson's commision and bonus information
+* while adding a new quota history with the information from the JSON file
+*
+*
+******************************************/
+create procedure Sales.UpdateSalesQuotasFromJson(@json nvarchar(max))
+as
+begin
+    select *
+    into #SalesBonusInfo
+    from openjson(@json, '$.SalesGoals')
+                  with (SalesPersonId int '$.SalesPerson.Id',
+                      CommissionPercent smallmoney '$.SalesPerson.CommissionPercent',
+                      GoalDate date '$.SalesGoal.GoalDate',
+                      QuarterlyGoal money '$.SalesGoal.QuarterlyGoal',
+                      SalesBonus money '$.SalesGoal.SalesBonus') as jsonData;
+
+    update Sales.SalesPerson
+    set SalesQuota    = sbi.QuarterlyGoal,
+        Bonus         = sbi.SalesBonus,
+        CommissionPct = sbi.CommissionPercent
+    from Sales.SalesPerson
+             join #SalesBonusInfo sbi
+                  on BusinessEntityID = sbi.SalesPersonId;
+
+    merge into Sales.SalesPersonQuotaHistory as tgt
+    using #SalesBonusInfo as src
+    on src.SalesPersonId = tgt.BusinessEntityID and tgt.QuotaDate = src.GoalDate
+    when matched then
+        update
+        set SalesQuota   = src.QuarterlyGoal,
+            ModifiedDate = getdate()
+    when not matched by target and src.QuarterlyGoal is not null then
+        insert (BusinessEntityID,
+                QuotaDate,
+                SalesQuota,
+                rowguid,
+                ModifiedDate)
+        values (src.SalesPersonId,
+                src.GoalDate,
+                src.QuarterlyGoal,
+                newid(),
+                getdate())
+        ;
+end
+go
+
+
+declare @year int
+select @year = 2021
+
 /*select sp.BusinessEntityID,
-       p.FirstName + ' ' + p.LastName name,
-       sp.SalesQuota,
-       sp.Bonus,
-       sp.CommissionPct
+       concat(p.FirstName, ' ', p.LastName) as Name,
+       sum(soh.SubTotal)                    as TotalSales
 from Sales.SalesPerson sp
-join Person.Person p on sp.BusinessEntityID = p.BusinessEntityID
-where sp.BusinessEntityID = 290
+         join Person.Person p
+              on p.BusinessEntityID = sp.BusinessEntityID
+         join Sales.SalesOrderHeader soh
+              on sp.BusinessEntityID = soh.SalesPersonID
+group by sp.BusinessEntityID, concat(p.FirstName, ' ', p.LastName)
+
 
 select *
-from Sales.SalesPersonQuotaHistory*/
+from Sales.SalesOrderHeader soh
+where soh.SalesPersonID = 285*/
 
-select
-into #SalesBonusInfo
-from openjson(@json, '$.SalesGoals')
-              with (SalesPersonId int '$.SalesPerson.Id',
-                  CommissionPercent smallmoney '$.SalesPerson.CommissionPercent',
-                  GoalDate date '$.SalesGoal.GoalDate',
-                  QuarterlyGoal money '$.SalesGoal.QuarterlyGoal',
-                  SalesBonus money '$.SalesGoal.SalesBonus') as jsonData
-
+select soh.SalesPersonID
+from Sales.SalesOrderHeader soh
