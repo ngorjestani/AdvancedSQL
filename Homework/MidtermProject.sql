@@ -257,24 +257,17 @@ begin
 end
 go
 
+-- BusinessEntityId: the salesperson's BusinessEntityId/SalespersonId
+-- SalesPersonName: concat(p.FirstName, ' ', p.LastName) as Name
+-- SalesYear: @year
+-- Quarter1Quota:
 
 declare @year int
 select @year = 2021
 
-/*select sp.BusinessEntityID,
-       concat(p.FirstName, ' ', p.LastName) as Name,
-       sum(soh.SubTotal)                    as TotalSales
-from Sales.SalesPerson sp
-         join Person.Person p
-              on p.BusinessEntityID = sp.BusinessEntityID
-         join Sales.SalesOrderHeader soh
-              on sp.BusinessEntityID = soh.SalesPersonID
-group by sp.BusinessEntityID, concat(p.FirstName, ' ', p.LastName)
-
-
-select *
+select distinct soh.SalesPersonID,
+                sum(soh.SubTotal) over ( partition by datepart(quarter, soh.OrderDate) ) QuarterlySales
 from Sales.SalesOrderHeader soh
-where soh.SalesPersonID = 285*/
+order by soh.SalesPersonID
 
-select soh.SalesPersonID
-from Sales.SalesOrderHeader soh
+select
