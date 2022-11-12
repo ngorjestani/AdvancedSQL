@@ -213,7 +213,6 @@ select @json = '{
 * This procedure takes a JSON file and updates the salesperson's commision and bonus information
 * while adding a new quota history with the information from the JSON file
 *
-*
 ******************************************/
 create procedure Sales.UpdateSalesQuotasFromJson(@json nvarchar(max))
 as
@@ -261,13 +260,97 @@ go
 -- SalesPersonName: concat(p.FirstName, ' ', p.LastName) as Name
 -- SalesYear: @year
 -- Quarter1Quota:
+-- Quarter1Sales:
+-- Quarter1Bonus:
+-- Quarter1Commission:
+-- Quarter2Quota:
+-- Quarter2Sales:
+-- Quarter2Bonus:
+-- Quarter2Commission:
+-- Quarter3Quota:
+-- Quarter3Sales:
+-- Quarter3Bonus:
+-- Quarter3Commission:
+-- Quarter4Quota:
+-- Quarter4Sales:
+-- Quarter4Bonus:
+-- Quarter4Commission:
+-- TotalAnnualSales: sum(Quarter1Sales, Quarter2Sales, Quarter3Sales, Quarter4Sales)
+-- TotalAnnualBonuses: sum(Quarter1Bonus, Quarter2Bonus, Quarter3Bonus, Quarter4Bonus)
+-- TotalAnnualCommission: sum(Quarter1Commission, Quarter2Commission, Quarter3Commission, Quarter4Commission)
+-- TotalAnnualSalesCompensation: sum(TotalAnnualBonuses, TotalAnnualCommission)
+
+begin tran
 
 declare @year int
 select @year = 2021
 
-select distinct soh.SalesPersonID,
-                sum(soh.SubTotal) over ( partition by datepart(quarter, soh.OrderDate) ) QuarterlySales
-from Sales.SalesOrderHeader soh
-order by soh.SalesPersonID
+create table #QuarterlySalesInfo
+(
+    BusinessEntityId int,
+    Q1Sales          money,
+    Q2Sales          money,
+    Q3Sales          money,
+    Q4Sales          money,
+    Q1Quota          money,
+    Q2Quota          money,
+    Q3Quota          money,
+    Q4Quota          money,
+    Q1Bonus          money,
+    Q2Bonus          money,
+    Q3Bonus          money,
+    Q4Bonus          money,
+    Q1Commission     money,
+    Q2Commission     money,
+    Q3Commission     money,
+    Q4Commission     money
+);
 
-select
+insert into #QuarterlySalesInfo (BusinessEntityId, Q1Sales, Q2Sales, Q3Sales, Q4Sales)
+select pvt.SalesPersonID,
+       pvt.[1] as Q1Sales,
+       pvt.[2] as Q2Sales,
+       pvt.[3] as Q3Sales,
+       pvt.[4] as Q4Sales
+from (select soh.SalesPersonID,
+             soh.SubTotal,
+             datepart(quarter, soh.OrderDate) as Qtr
+      from Sales.SalesOrderHeader soh
+      where year(soh.OrderDate) = @year
+        and soh.SalesPersonID is not null) p
+         pivot ( sum(Subtotal) for Qtr in ([1], [2], [3], [4])) pvt
+
+update qsi
+set qsi.Q1Quota = quotas.Q1Quota,
+    qsi.Q2Quota = quotas.Q2Quota,
+    qsi.Q3Quota = quotas.Q3Quota,
+    qsi.Q4Quota = quotas.Q4Quota
+from #QuarterlySalesInfo qsi
+         join (select pvt.BusinessEntityID,
+                      pvt.[1] as Q1Quota,
+                      pvt.[2] as Q2Quota,
+                      pvt.[3] as Q3Quota,
+                      pvt.[4] as Q4Quota
+               from (select spqh.BusinessEntityID, datepart(quarter, spqh.QuotaDate) as Qtr, spqh.SalesQuota
+                     from Sales.SalesPersonQuotaHistory spqh
+                     where year(spqh.QuotaDate) = @year) p
+                        pivot ( Max(SalesQuota) for Qtr in ([1], [2], [3], [4]) ) pvt) quotas
+              on qsi.BusinessEntityId = quotas.BusinessEntityId
+
+select * from #QuarterlySalesInfo
+
+rollback tran
+
+/****************************************
+* Author: ngorjestani
+* Create Date: 11/8/2022
+*
+* This procedure calculates the sales, commission, and bonus information for each salesperson for the given year.
+* Sales, commission, bonuses, and quotas will be shown by quarter as well as the total amounts for the year
+*
+******************************************/
+create procedure Sales.CalculateSalesCommissionInfoByYear(@year int)
+as
+begin
+
+end
