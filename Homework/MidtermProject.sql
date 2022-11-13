@@ -337,7 +337,17 @@ from #QuarterlySalesInfo qsi
                         pivot ( Max(SalesQuota) for Qtr in ([1], [2], [3], [4]) ) pvt) quotas
               on qsi.BusinessEntityId = quotas.BusinessEntityId
 
-select * from #QuarterlySalesInfo
+update qsi
+set qsi.Q1Commission = qsi.Q1Sales * sp.CommissionPct,
+    qsi.Q2Commission = qsi.Q2Sales * sp.CommissionPct,
+    qsi.Q3Commission = qsi.Q3Sales * sp.CommissionPct,
+    qsi.Q4Commission = qsi.Q4Sales * sp.CommissionPct
+from #QuarterlySalesInfo qsi
+         join Sales.SalesPerson sp
+              on qsi.BusinessEntityId = sp.BusinessEntityID
+
+select *
+from #QuarterlySalesInfo
 
 rollback tran
 
