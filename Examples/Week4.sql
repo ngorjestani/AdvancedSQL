@@ -1,300 +1,376 @@
 -- Let's add some new products
 -- if there is no column list, we need a value for every column (excluding identities)
-Insert into Production.Product
-Values ('Helmet with Visor','H01234', 0, 1, 'Pink', 15, 10, 12.39, 29.99, 'Adult', 
-null, null, null, 0, null, null, null, 31, null, '9/15/2021', null, null, NewID(), 
-GetDate())
-Select * from Production.product order by ProductID desc
+INSERT INTO Production.Product
+VALUES ('Helmet with Visor', 'H01234', 0, 1, 'Pink', 15, 10, 12.39, 29.99, 'Adult',
+        NULL, NULL, NULL, 0, NULL, NULL, NULL, 31, NULL, '9/15/2021', NULL, NULL, NEWID(),
+        GETDATE())
+SELECT *
+FROM Production.product
+ORDER BY ProductID DESC
 -- now insert with a column list, and add multiple rows at a time
 -- this will throw an error because the product names are duplicates
-Insert into Production.Product (Name, ProductNumber, Color, ListPrice, 
-StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint, 
-DaysToManufacture,SellStartDate, rowguid, ModifiedDate) 
-Values ('Spiked Pedals','SP012354', 'Orange', 140.00, 56.90, 0, 1, 100, 50, 0, 
-'9/6/2022', NewID(), GetDate()),
-('Spiked Pedals','SP012355', 'Red', 140.00, 56.90, 0, 1, 100, 50, 0, '9/6/2022', 
-NewID(), GetDate()),
-('Spiked Pedals','SP012356', 'Black', 140.00, 56.90, 0, 1, 100, 50, 0, '9/6/2022', 
-NewID(), GetDate()),
-('Spiked Pedals','SP012357', 'Neon Green', 140.00, 56.90, 0, 1, 100, 50, 0, null, 
-NewID(), GetDate())
+INSERT INTO Production.Product (Name, ProductNumber, Color, ListPrice,
+                                StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint,
+                                DaysToManufacture, SellStartDate, rowguid, ModifiedDate)
+VALUES ('Spiked Pedals', 'SP012354', 'Orange', 140.00, 56.90, 0, 1, 100, 50, 0,
+        '9/6/2022', NEWID(), GETDATE()),
+       ('Spiked Pedals', 'SP012355', 'Red', 140.00, 56.90, 0, 1, 100, 50, 0, '9/6/2022',
+        NEWID(), GETDATE()),
+       ('Spiked Pedals', 'SP012356', 'Black', 140.00, 56.90, 0, 1, 100, 50, 0, '9/6/2022',
+        NEWID(), GETDATE()),
+       ('Spiked Pedals', 'SP012357', 'Neon Green', 140.00, 56.90, 0, 1, 100, 50, 0, NULL,
+        NEWID(), GETDATE())
 -- try again 
 -- you'll notice two IDs are skipped - this is because it tried to insert 2 rows earlier and hit the duplicate value for the name
 -- which violated the constraint and caused the rows not to be inserted
-Insert into Production.Product (Name, ProductNumber, Color, ListPrice, 
-StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint, 
-DaysToManufacture,SellStartDate, rowguid, ModifiedDate) 
-Values ('Spiked Pedals - Orange','SP012354', 'Orange', 140.00, 56.90, 0, 1, 100, 
-50, 0, '9/6/2022', NewID(), GetDate()),
-('Spiked Pedals - Red','SP012355', 'Red', 140.00, 56.90, 0, 1, 100, 50, 0, 
-'9/6/2022', NewID(), GetDate()),
-('Spiked Pedals - Black','SP012356', 'Black', 140.00, 56.90, 0, 1, 100, 50, 0, 
-'9/6/2022', NewID(), GetDate()),
-('Spiked Pedals - Green','SP012357', 'Neon Green', 140.00, 56.90, 0, 1, 100, 50, 0,
-'9/6/2022', NewID(), GetDate())
-Select top 5 * from production.Product 
-order by ProductID desc
+INSERT INTO Production.Product (Name, ProductNumber, Color, ListPrice,
+                                StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint,
+                                DaysToManufacture, SellStartDate, rowguid, ModifiedDate)
+VALUES ('Spiked Pedals - Orange', 'SP012354', 'Orange', 140.00, 56.90, 0, 1, 100,
+        50, 0, '9/6/2022', NEWID(), GETDATE()),
+       ('Spiked Pedals - Red', 'SP012355', 'Red', 140.00, 56.90, 0, 1, 100, 50, 0,
+        '9/6/2022', NEWID(), GETDATE()),
+       ('Spiked Pedals - Black', 'SP012356', 'Black', 140.00, 56.90, 0, 1, 100, 50, 0,
+        '9/6/2022', NEWID(), GETDATE()),
+       ('Spiked Pedals - Green', 'SP012357', 'Neon Green', 140.00, 56.90, 0, 1, 100, 50, 0,
+        '9/6/2022', NEWID(), GETDATE())
+SELECT TOP 5 *
+FROM production.Product
+ORDER BY ProductID DESC
 -- typically this would come from an actual table, rather than just selecting the values
 -- but the concept is the same
 -- columns selected must match the order set by the column list (or the table if nocolumn list)
-Insert into Production.Product (Name, ProductNumber, Color, ListPrice, 
-StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint, 
-DaysToManufacture,SellStartDate, rowguid, ModifiedDate) 
-Select 'Spiked Pedals - Blue','SP012358', 'Blue', 140.00, 56.90, 0, 1, 100, 50, 0, 
-'9/6/2022', NewID(), GetDate()
+INSERT INTO Production.Product (Name, ProductNumber, Color, ListPrice,
+                                StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint,
+                                DaysToManufacture, SellStartDate, rowguid, ModifiedDate)
+SELECT 'Spiked Pedals - Blue',
+       'SP012358',
+       'Blue',
+       140.00,
+       56.90,
+       0,
+       1,
+       100,
+       50,
+       0,
+       '9/6/2022',
+       NEWID(),
+       GETDATE()
 -- forcing a value into an identity column
 -- must use a column list and must include the identity column and its value
 -- must turn the identity insert on before running and off after
-Set identity_insert Production.product on-- Let's add some new products
+SET IDENTITY_INSERT Production.product ON
+-- Let's add some new products
 -- if there is no column list, we need a value for every column (excluding identities)
-Insert into Production.Product
-Values ('Helmet with Visor','H01234', 0, 1, 'Pink', 15, 10, 12.39, 29.99, 'Adult', 
-null, null, null, 0, null, null, null, 31, null, '9/15/2021', null, null, NewID(), 
-GetDate())
-Select * from Production.product order by ProductID desc
+INSERT INTO Production.Product
+VALUES ('Helmet with Visor', 'H01234', 0, 1, 'Pink', 15, 10, 12.39, 29.99, 'Adult',
+        NULL, NULL, NULL, 0, NULL, NULL, NULL, 31, NULL, '9/15/2021', NULL, NULL, NEWID(),
+        GETDATE())
+SELECT *
+FROM Production.product
+ORDER BY ProductID DESC
 -- now insert with a column list, and add multiple rows at a time
 -- this will throw an error because the product names are duplicates
-Insert into Production.Product (Name, ProductNumber, Color, ListPrice, 
-StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint, 
-DaysToManufacture,SellStartDate, rowguid, ModifiedDate) 
-Values ('Spiked Pedals','SP012354', 'Orange', 140.00, 56.90, 0, 1, 100, 50, 0, 
-'9/6/2022', NewID(), GetDate()),
-('Spiked Pedals','SP012355', 'Red', 140.00, 56.90, 0, 1, 100, 50, 0, '9/6/2022', 
-NewID(), GetDate()),
-('Spiked Pedals','SP012356', 'Black', 140.00, 56.90, 0, 1, 100, 50, 0, '9/6/2022', 
-NewID(), GetDate()),
-('Spiked Pedals','SP012357', 'Neon Green', 140.00, 56.90, 0, 1, 100, 50, 0, null, 
-NewID(), GetDate())
+INSERT INTO Production.Product (Name, ProductNumber, Color, ListPrice,
+                                StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint,
+                                DaysToManufacture, SellStartDate, rowguid, ModifiedDate)
+VALUES ('Spiked Pedals', 'SP012354', 'Orange', 140.00, 56.90, 0, 1, 100, 50, 0,
+        '9/6/2022', NEWID(), GETDATE()),
+       ('Spiked Pedals', 'SP012355', 'Red', 140.00, 56.90, 0, 1, 100, 50, 0, '9/6/2022',
+        NEWID(), GETDATE()),
+       ('Spiked Pedals', 'SP012356', 'Black', 140.00, 56.90, 0, 1, 100, 50, 0, '9/6/2022',
+        NEWID(), GETDATE()),
+       ('Spiked Pedals', 'SP012357', 'Neon Green', 140.00, 56.90, 0, 1, 100, 50, 0, NULL,
+        NEWID(), GETDATE())
 -- try again 
 -- you'll notice two IDs are skipped - this is because it tried to insert 2 rows earlier and hit the duplicate value for the name
 -- which violated the constraint and caused the rows not to be inserted
-Insert into Production.Product (Name, ProductNumber, Color, ListPrice, 
-StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint, 
-DaysToManufacture,SellStartDate, rowguid, ModifiedDate) 
-Values ('Spiked Pedals - Orange','SP012354', 'Orange', 140.00, 56.90, 0, 1, 100, 
-50, 0, '9/6/2022', NewID(), GetDate()),
-('Spiked Pedals - Red','SP012355', 'Red', 140.00, 56.90, 0, 1, 100, 50, 0, 
-'9/6/2022', NewID(), GetDate()),
-('Spiked Pedals - Black','SP012356', 'Black', 140.00, 56.90, 0, 1, 100, 50, 0, 
-'9/6/2022', NewID(), GetDate()),
-('Spiked Pedals - Green','SP012357', 'Neon Green', 140.00, 56.90, 0, 1, 100, 50, 0,
-'9/6/2022', NewID(), GetDate())
-Select top 5 * from production.Product 
-order by ProductID desc
+INSERT INTO Production.Product (Name, ProductNumber, Color, ListPrice,
+                                StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint,
+                                DaysToManufacture, SellStartDate, rowguid, ModifiedDate)
+VALUES ('Spiked Pedals - Orange', 'SP012354', 'Orange', 140.00, 56.90, 0, 1, 100,
+        50, 0, '9/6/2022', NEWID(), GETDATE()),
+       ('Spiked Pedals - Red', 'SP012355', 'Red', 140.00, 56.90, 0, 1, 100, 50, 0,
+        '9/6/2022', NEWID(), GETDATE()),
+       ('Spiked Pedals - Black', 'SP012356', 'Black', 140.00, 56.90, 0, 1, 100, 50, 0,
+        '9/6/2022', NEWID(), GETDATE()),
+       ('Spiked Pedals - Green', 'SP012357', 'Neon Green', 140.00, 56.90, 0, 1, 100, 50, 0,
+        '9/6/2022', NEWID(), GETDATE())
+SELECT TOP 5 *
+FROM production.Product
+ORDER BY ProductID DESC
 -- typically this would come from an actual table, rather than just selecting the values
 -- but the concept is the same
 -- columns selected must match the order set by the column list (or the table if nocolumn list)
-Insert into Production.Product (Name, ProductNumber, Color, ListPrice, 
-StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint, 
-DaysToManufacture,SellStartDate, rowguid, ModifiedDate) 
-Select 'Spiked Pedals - Blue','SP012358', 'Blue', 140.00, 56.90, 0, 1, 100, 50, 0, 
-'9/6/2022', NewID(), GetDate()
+INSERT INTO Production.Product (Name, ProductNumber, Color, ListPrice,
+                                StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint,
+                                DaysToManufacture, SellStartDate, rowguid, ModifiedDate)
+SELECT 'Spiked Pedals - Blue',
+       'SP012358',
+       'Blue',
+       140.00,
+       56.90,
+       0,
+       1,
+       100,
+       50,
+       0,
+       '9/6/2022',
+       NEWID(),
+       GETDATE()
 -- forcing a value into an identity column
 -- must use a column list and must include the identity column and its value
 -- must turn the identity insert on before running and off after
-Set identity_insert Production.product on
-Insert into Production.Product (ProductID, Name, ProductNumber, Color, ListPrice, 
-StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint, 
-DaysToManufacture,SellStartDate, rowguid, ModifiedDate) 
-Select 1007, 'Spiked Pedals - Purple','SP012359', 'Purple', 140.00, 56.90, 0, 1, 
-100, 50, 0, '9/6/2022', NewID(), GetDate()
-Set identity_insert Production.product off
+SET IDENTITY_INSERT Production.product ON
+INSERT INTO Production.Product (ProductID, Name, ProductNumber, Color, ListPrice,
+                                StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint,
+                                DaysToManufacture, SellStartDate, rowguid, ModifiedDate)
+SELECT 1007,
+       'Spiked Pedals - Purple',
+       'SP012359',
+       'Purple',
+       140.00,
+       56.90,
+       0,
+       1,
+       100,
+       50,
+       0,
+       '9/6/2022',
+       NEWID(),
+       GETDATE()
+SET IDENTITY_INSERT Production.product OFF
 -- There is a way to fix the gap - say you try to insert a large number of rows andit fails,
 -- and you want to go back before you try again
 -- I re-ran a failed insert statement a few times to get a gap
 -- 1008 is the last data value we had
 -- to see the next 'slated' value of the identity, we can use dbcc checkident
-dbcc checkident('production.product')
+DBCC CHECKIDENT ('production.product')
 -- output: Checking identity information: current identity value '1023', current column value '1008'.
 -- we can reset it back to an older value if we want/need to
-dbcc checkident('production.product', reseed, 1008)
-Insert into Production.Product (Name, ProductNumber, Color, ListPrice, 
-StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint, 
-DaysToManufacture,SellStartDate, rowguid, ModifiedDate) 
-Select 'Spiked Pedals - Yellow','SP012360', 'Yellow', 140.00, 56.90, 0, 1, 100, 50,
-0, '9/6/2022', NewID(), GetDate()
+DBCC CHECKIDENT ('production.product', RESEED, 1008)
+INSERT INTO Production.Product (Name, ProductNumber, Color, ListPrice,
+                                StandardCost, MakeFlag, FinishedGoodsFlag, SafetyStockLevel, ReorderPoint,
+                                DaysToManufacture, SellStartDate, rowguid, ModifiedDate)
+SELECT 'Spiked Pedals - Yellow',
+       'SP012360',
+       'Yellow',
+       140.00,
+       56.90,
+       0,
+       1,
+       100,
+       50,
+       0,
+       '9/6/2022',
+       NEWID(),
+       GETDATE()
 -- the Scope_Identity() function returns the value of the last identity inserted onthe connection
-Select SCOPE_IDENTITY()
+SELECT SCOPE_IDENTITY()
 -----------
 -- Updates
 -----------
 -- start by writing a select statement that identifies the rows to be modified
-Select *
-From Production.Product p 
-where p.name like 'Spiked Pedals - %'
+SELECT *
+FROM Production.Product p
+WHERE p.name LIKE 'Spiked Pedals - %'
 -- steal the where-clause to use in our actual update
-Update Production.Product
-set Size = 'Med',
-ProductSubcategoryID = 13
-where name like 'Spiked Pedals - %'
+UPDATE Production.Product
+SET Size                 = 'Med',
+    ProductSubcategoryID = 13
+WHERE name LIKE 'Spiked Pedals - %'
 -- we decided for random reasons, we don't want to work with vendors in Texas anymore. Inactivate them
-Select v.* 
-from Purchasing.Vendor v
-Join Purchasing.vVendorWithAddresses va 
-on v.BusinessEntityID = va.BusinessEntityID
-where va.StateProvinceName = 'Texas'
+SELECT v.*
+FROM Purchasing.Vendor v
+         JOIN Purchasing.vVendorWithAddresses va
+              ON v.BusinessEntityID = va.BusinessEntityID
+WHERE va.StateProvinceName = 'Texas'
 -- now that we've identified the rows, do the update statement
-Update Purchasing.Vendor 
-Set ActiveFlag = 0
-from Purchasing.Vendor v
-Join Purchasing.vVendorWithAddresses va 
-on v.BusinessEntityID = va.BusinessEntityID
-where va.StateProvinceName = 'Texas'
+UPDATE Purchasing.Vendor
+SET ActiveFlag = 0
+FROM Purchasing.Vendor v
+         JOIN Purchasing.vVendorWithAddresses va
+              ON v.BusinessEntityID = va.BusinessEntityID
+WHERE va.StateProvinceName = 'Texas'
 --------------
 -- Delete
 --------------
-Select * from Production.Product
-Where FinishedGoodsFlag = 1
+SELECT *
+FROM Production.Product
+WHERE FinishedGoodsFlag = 1
 -- try to delete a product that has been sold (ID 717) - this will not work - foreign key constraint
-Delete from Production.Product 
-where ProductID = 717
+DELETE
+FROM Production.Product
+WHERE ProductID = 717
 -- delete one of our new products (ID 1000)
-Delete from Production.Product 
-where ProductID = 1000
-Select * from Production.ProductSubcategory
-insert into Production.ProductSubcategory
-Values (2, 'Fancy items', newID(), GetDate())
+DELETE
+FROM Production.Product
+WHERE ProductID = 1000
+SELECT *
+FROM Production.ProductSubcategory
+INSERT INTO Production.ProductSubcategory
+VALUES (2, 'Fancy items', NEWID(), GETDATE())
 -- change the product subcategoryID for all the new products we added
-Update Production.Product 
-set ProductSubcategoryID = 38 
-where ProductID > 1000
+UPDATE Production.Product
+SET ProductSubcategoryID = 38
+WHERE ProductID > 1000
 -- now we decide we want to delete 'fancy items' subcategory
-Delete from Production.ProductSubcategory 
-where ProductSubcategoryID = 38
+DELETE
+FROM Production.ProductSubcategory
+WHERE ProductSubcategoryID = 38
 -- for now, set those products' subcategoryID null so we can delete this product subcategory row
-Update Production.Product
-set ProductSubcategoryID = null
-where ProductSubcategoryID = 38
+UPDATE Production.Product
+SET ProductSubcategoryID = NULL
+WHERE ProductSubcategoryID = 38
 -- now re-run the delete 
-Delete from Production.ProductSubcategory 
-where ProductSubcategoryID = 38
+DELETE
+FROM Production.ProductSubcategory
+WHERE ProductSubcategoryID = 38
 -- re-add our fancy items subcategory
-insert into Production.ProductSubcategory
-Values (2, 'Fancy items', newID(), GetDate())
+INSERT INTO Production.ProductSubcategory
+VALUES (2, 'Fancy items', NEWID(), GETDATE())
 -- change the product subcategoryID for all the new products we added
-Update Production.Product 
-set ProductSubcategoryID = 39 
-where ProductID > 1000
+UPDATE Production.Product
+SET ProductSubcategoryID = 39
+WHERE ProductID > 1000
 -- Now delete all products where the name of the subcategory is 'fancy items'
 -- again, start with the select statement
-Select p.* 
-From Production.Product p 
-Join production.ProductSubcategory ps 
-on p.ProductSubcategoryID = ps.ProductSubcategoryID
-Where ps.name = 'Fancy Items'
+SELECT p.*
+FROM Production.Product p
+         JOIN production.ProductSubcategory ps
+              ON p.ProductSubcategoryID = ps.ProductSubcategoryID
+WHERE ps.name = 'Fancy Items'
 -- now copy everything after the select clause and use it with the delete
-Delete from Production.Product
-From Production.Product p 
-Join production.ProductSubcategory ps 
-on p.ProductSubcategoryID = ps.ProductSubcategoryID
-Where ps.name = 'Fancy Items'
-select * from dbo.DatabaseLog
+DELETE
+FROM Production.Product
+FROM Production.Product p
+         JOIN production.ProductSubcategory ps
+              ON p.ProductSubcategoryID = ps.ProductSubcategoryID
+WHERE ps.name = 'Fancy Items'
+SELECT *
+FROM dbo.DatabaseLog
 -- truncate the database log table
-truncate table dbo.DatabaseLog
-select * from dbo.DatabaseLog
+TRUNCATE TABLE dbo.DatabaseLog
+SELECT *
+FROM dbo.DatabaseLog
 -----------------------------------
 -- Transactions
 -----------------------------------
 -- implicit transactions
-Set implicit_transactions on 
-Create table Test (
-ID int identity(1,1), 
-Name varchar(50)
+SET IMPLICIT_TRANSACTIONS ON
+CREATE TABLE Test
+(
+    ID   INT IDENTITY (1,1),
+    Name VARCHAR(50)
 )
 -- select from our new table
-Select * from test
+SELECT *
+FROM test
 -- add data
-Insert into Test 
-Values ('New Test')
+INSERT INTO Test
+VALUES ('New Test')
 -- its really here!
-Select * from test
-Rollback -- now the table doesn't exist
-Select * from test
-Set implicit_Transactions off
-Drop table Test
+SELECT *
+FROM test
+ROLLBACK -- now the table doesn't exist
+SELECT *
+FROM test
+SET IMPLICIT_TRANSACTIONS OFF
+DROP TABLE Test
 -- Explicit transactions
-Begin tran 
-Create table Test (
-ID int identity(1,1), 
-Name varchar(50)
+BEGIN TRAN
+CREATE TABLE Test
+(
+    ID   INT IDENTITY (1,1),
+    Name VARCHAR(50)
 )
-Select * from test
+SELECT *
+FROM test
 -- add data
-Insert into Test 
-Values ('New Test')
+INSERT INTO Test
+VALUES ('New Test')
 -- its really here!
-Select * from test
-Commit -- keep the table this time
-Insert into Test 
-Values ('New Test2')
-Drop table Test
-Begin Tran
-Select @@TRANCOUNT
-Rollback
-Begin tran
-Create table Test (
-ID int identity(1,1), 
-Name varchar(50)
+SELECT *
+FROM test
+COMMIT -- keep the table this time
+INSERT INTO Test
+VALUES ('New Test2')
+DROP TABLE Test
+BEGIN TRAN
+SELECT @@TRANCOUNT
+ROLLBACK
+BEGIN TRAN
+CREATE TABLE Test
+(
+    ID   INT IDENTITY (1,1),
+    Name VARCHAR(50)
 )
 -- create a "save point"
-Save transaction TableCreate
+SAVE TRANSACTION TableCreate
 -- now insert a row
-Insert into Test 
-Values ('New Test')
+INSERT INTO Test
+VALUES ('New Test')
 -- it exists
-Select * from Test
+SELECT *
+FROM Test
 -- rollback to the savepoint
-Rollback transaction TableCreate
+ROLLBACK TRANSACTION TableCreate
 -- transaction still active
-Select @@TRANCOUNT
+SELECT @@TRANCOUNT
 -- row is not there
-Select * from Test
+SELECT *
+FROM Test
 -- commit the transaction
-commit
+COMMIT
 -- transaction not running
-Select @@TRANCOUNT
+SELECT @@TRANCOUNT
 -- table exists but row doesn't
-Select * from Test
-Drop table Test
+SELECT *
+FROM Test
+DROP TABLE Test
 -- testing auto-rollback
-Begin tran
-Create table Test2 (
-ID int identity(1,1), 
-number int
+BEGIN TRAN
+CREATE TABLE Test2
+(
+    ID     INT IDENTITY (1,1),
+    number INT
 )
-Insert into Test2
-Values (1)
-Select * from Test2
-Select @@TRANCOUNT
+INSERT INTO Test2
+VALUES (1)
+SELECT *
+FROM Test2
+SELECT @@TRANCOUNT
 -- should throw an error - can't put text into a number column
-Insert into Test2
-Values ('Test one')
+INSERT INTO Test2
+VALUES ('Test one')
 -- now the transaction isn't running
-Select @@TRANCOUNT
+SELECT @@TRANCOUNT
 -- transactions aren't the best way to handle validating DML statements
 -- Backup tables are a better way to keep the data while we check if our DML commands were 'good'
 -- Select Into lets you create a quick backup table
 -- this creates a new table with the same structure, datatypes, etc (but not keys or constraints) and data as the one it came from
-Select *
-Into Production.Product_bkup -- new table name
-From production.Product
+SELECT *
+INTO Production.Product_bkup -- new table name
+FROM production.Product
 -- let's write a bad update
-Update Production.Product 
-Set ListPrice = 0
+UPDATE Production.Product
+SET ListPrice = 0
 --oops!
-select * from Production.Product
+SELECT *
+FROM Production.Product
 -- so fix it from the backup table
-Select p.ProductID, 
-p.ListPrice,
-b.ListPrice
-from production.Product p
-Join Production.Product_bkup b
-on p.ProductID = b.ProductID
+SELECT p.ProductID,
+       p.ListPrice,
+       b.ListPrice
+FROM production.Product p
+         JOIN Production.Product_bkup b
+              ON p.ProductID = b.ProductID
 -- now write the update to fix it
-Update Production.Product
-Set ListPrice = b.ListPrice -- the backup table's list price
-from production.Product p
-Join Production.Product_bkup b
-on p.ProductID = b.ProductID
+UPDATE Production.Product
+SET ListPrice = b.ListPrice -- the backup table's list price
+FROM production.Product p
+         JOIN Production.Product_bkup b
+              ON p.ProductID = b.ProductID
 -- all fixed
-select * from Production.Product
+SELECT *
+FROM Production.Product
