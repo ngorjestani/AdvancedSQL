@@ -1,223 +1,223 @@
-use master;
-go
+USE master;
+GO
 
-create database LibrarySystem_NG
-go
+CREATE DATABASE LibrarySystem_NG
+GO
 
-use LibrarySystem_NG;
-go
+USE LibrarySystem_NG;
+GO
 
-create table ItemStatus
+CREATE TABLE ItemStatus
 (
-    ItemStatusCode   char(1)     not null,
-    Name             varchar(20) not null,
-    IsActive         bit         not null,
-    InactiveDateTime datetime    null,
-    CreatedDateTime  datetime    not null,
-    CreatedBy        varchar(50) not null,
-    ModifiedDatetime datetime    null,
-    ModifiedBy       varchar(50) null,
-    constraint pk_ItemStatus primary key (ItemStatusCode),
-    constraint uk_ItemStatus_Name unique (Name)
+    ItemStatusCode   CHAR(1)     NOT NULL,
+    Name             VARCHAR(20) NOT NULL,
+    IsActive         BIT         NOT NULL,
+    InactiveDateTime DATETIME    NULL,
+    CreatedDateTime  DATETIME    NOT NULL,
+    CreatedBy        VARCHAR(50) NOT NULL,
+    ModifiedDatetime DATETIME    NULL,
+    ModifiedBy       VARCHAR(50) NULL,
+    CONSTRAINT pk_ItemStatus PRIMARY KEY (ItemStatusCode),
+    CONSTRAINT uk_ItemStatus_Name UNIQUE (Name)
 );
 
-create sequence seq_CategoryId
-    start with 1
-    increment by 1
-go
+CREATE SEQUENCE seq_CategoryId
+    START WITH 1
+    INCREMENT BY 1
+GO
 
-create table Category
+CREATE TABLE Category
 (
-    CategoryId       tinyint default next value for seq_CategoryId,
-    Name             varchar(50) not null,
-    IsActive         bit         not null,
-    InactiveDateTime datetime    null,
-    CreatedDateTime  datetime    not null,
-    CreatedBy        varchar(50) not null,
-    ModifiedDateTime datetime    null,
-    ModifiedBy       varchar(50) null,
-    constraint pk_Category primary key (CategoryId),
-    constraint uk_Category_Name unique (Name)
+    CategoryId       TINYINT DEFAULT NEXT VALUE FOR seq_CategoryId,
+    Name             VARCHAR(50) NOT NULL,
+    IsActive         BIT         NOT NULL,
+    InactiveDateTime DATETIME    NULL,
+    CreatedDateTime  DATETIME    NOT NULL,
+    CreatedBy        VARCHAR(50) NOT NULL,
+    ModifiedDateTime DATETIME    NULL,
+    ModifiedBy       VARCHAR(50) NULL,
+    CONSTRAINT pk_Category PRIMARY KEY (CategoryId),
+    CONSTRAINT uk_Category_Name UNIQUE (Name)
 );
 
-create table ItemType
+CREATE TABLE ItemType
 (
-    ItemTypeCode             char(1)       not null,
-    Name                     varchar(20)   not null,
-    DefaultLoanPeriodInWeeks tinyint       not null,
-    RenewalsAllowed          bit           not null,
-    RenewalLimit             tinyint       not null,
-    RenewalPeriodInWeeks     tinyint       not null,
-    ItemTypeLimitPerCheckout tinyint       null,
-    ItemTypeLimitPerCard     tinyint       null,
-    LateFeeAmountPerDate     numeric(4, 2) not null,
-    LateFeeMaxAmount         numeric(4, 2) null,
-    CreatedDateTime          datetime      not null,
-    CreatedBy                varchar(50)   not null,
-    ModifiedDateTime         datetime      null,
-    ModifiedBy               varchar(50)   null,
-    constraint pk_ItemType primary key (ItemTypeCode),
-    constraint uk_ItemType_Name unique (Name)
+    ItemTypeCode             CHAR(1)       NOT NULL,
+    Name                     VARCHAR(20)   NOT NULL,
+    DefaultLoanPeriodInWeeks TINYINT       NOT NULL,
+    RenewalsAllowed          BIT           NOT NULL,
+    RenewalLimit             TINYINT       NOT NULL,
+    RenewalPeriodInWeeks     TINYINT       NOT NULL,
+    ItemTypeLimitPerCheckout TINYINT       NULL,
+    ItemTypeLimitPerCard     TINYINT       NULL,
+    LateFeeAmountPerDate     NUMERIC(4, 2) NOT NULL,
+    LateFeeMaxAmount         NUMERIC(4, 2) NULL,
+    CreatedDateTime          DATETIME      NOT NULL,
+    CreatedBy                VARCHAR(50)   NOT NULL,
+    ModifiedDateTime         DATETIME      NULL,
+    ModifiedBy               VARCHAR(50)   NULL,
+    CONSTRAINT pk_ItemType PRIMARY KEY (ItemTypeCode),
+    CONSTRAINT uk_ItemType_Name UNIQUE (Name)
 );
 
-create table Items
+CREATE TABLE Items
 (
-    ItemId           bigint identity (1,1),
-    BarcodeId        varchar(20)   not null,
-    Title            varchar(100)  not null,
-    Description      varchar(1000) not null,
-    YearPublished    smallint      not null,
-    AuthorLastName   varchar(50)   not null,
-    AuthorFirstName  varchar(50)   not null,
-    CallNumber       varchar(10)   not null,
-    ReplacementCost  numeric(6, 2) not null,
-    CategoryId       tinyint       not null,
-    ItemStatusCode   char(1)       not null,
-    ItemTypeCode     char(1)       not null,
-    CreatedDateTime  datetime      not null,
-    CreatedBy        varchar(50)   not null,
-    ModifiedDateTime datetime      null,
-    ModifiedBy       varchar(50)   null,
-    constraint pk_Items primary key (ItemId),
-    constraint uk_Item_Title unique (Title),
-    constraint fk_Items_CategoryId foreign key (CategoryId)
-        references Category (CategoryId),
-    constraint fk_Items_ItemStatusCode foreign key (ItemStatusCode)
-        references ItemStatus (ItemStatusCode),
-    constraint fk_ItemTypeCode foreign key (ItemTypeCode)
-        references ItemType (ItemTypeCode)
+    ItemId           BIGINT IDENTITY (1,1),
+    BarcodeId        VARCHAR(20)   NOT NULL,
+    Title            VARCHAR(100)  NOT NULL,
+    Description      VARCHAR(1000) NOT NULL,
+    YearPublished    SMALLINT      NOT NULL,
+    AuthorLastName   VARCHAR(50)   NOT NULL,
+    AuthorFirstName  VARCHAR(50)   NOT NULL,
+    CallNumber       VARCHAR(10)   NOT NULL,
+    ReplacementCost  NUMERIC(6, 2) NOT NULL,
+    CategoryId       TINYINT       NOT NULL,
+    ItemStatusCode   CHAR(1)       NOT NULL,
+    ItemTypeCode     CHAR(1)       NOT NULL,
+    CreatedDateTime  DATETIME      NOT NULL,
+    CreatedBy        VARCHAR(50)   NOT NULL,
+    ModifiedDateTime DATETIME      NULL,
+    ModifiedBy       VARCHAR(50)   NULL,
+    CONSTRAINT pk_Items PRIMARY KEY (ItemId),
+    CONSTRAINT uk_Item_Title UNIQUE (Title),
+    CONSTRAINT fk_Items_CategoryId FOREIGN KEY (CategoryId)
+        REFERENCES Category (CategoryId),
+    CONSTRAINT fk_Items_ItemStatusCode FOREIGN KEY (ItemStatusCode)
+        REFERENCES ItemStatus (ItemStatusCode),
+    CONSTRAINT fk_ItemTypeCode FOREIGN KEY (ItemTypeCode)
+        REFERENCES ItemType (ItemTypeCode)
 );
 
-create table Patron
+CREATE TABLE Patron
 (
-    PatronId         bigint identity (1,1),
-    BarcodeId        varchar(20) not null,
-    FirstName        varchar(50) not null,
-    MiddleName       varchar(50) null,
-    LastName         varchar(50) not null,
-    Suffix           varchar(20) null,
-    BirthDate        date        not null,
-    Address          varchar(50) not null,
-    City             varchar(30) not null,
-    State            char(2)     not null,
-    ZipCode          varchar(10) not null,
-    ParentGuardianId bigint      null,
-    CreatedDateTime  datetime    not null,
-    CreatedBy        varchar(50) not null,
-    ModifiedDateTime datetime    null,
-    ModifiedBy       varchar(50) null,
-    constraint pk_Patron primary key (PatronId),
-    constraint fk_Patron_ParentGuardianId foreign key (ParentGuardianId)
-        references Patron (PatronId)
+    PatronId         BIGINT IDENTITY (1,1),
+    BarcodeId        VARCHAR(20) NOT NULL,
+    FirstName        VARCHAR(50) NOT NULL,
+    MiddleName       VARCHAR(50) NULL,
+    LastName         VARCHAR(50) NOT NULL,
+    Suffix           VARCHAR(20) NULL,
+    BirthDate        DATE        NOT NULL,
+    Address          VARCHAR(50) NOT NULL,
+    City             VARCHAR(30) NOT NULL,
+    State            CHAR(2)     NOT NULL,
+    ZipCode          VARCHAR(10) NOT NULL,
+    ParentGuardianId BIGINT      NULL,
+    CreatedDateTime  DATETIME    NOT NULL,
+    CreatedBy        VARCHAR(50) NOT NULL,
+    ModifiedDateTime DATETIME    NULL,
+    ModifiedBy       VARCHAR(50) NULL,
+    CONSTRAINT pk_Patron PRIMARY KEY (PatronId),
+    CONSTRAINT fk_Patron_ParentGuardianId FOREIGN KEY (ParentGuardianId)
+        REFERENCES Patron (PatronId)
 );
 
-create table Loans
+CREATE TABLE Loans
 (
-    LoanId           bigint identity (1,1),
-    ItemId           bigint      not null,
-    PatronId         bigint      not null,
-    CheckoutDateTime datetime    not null,
-    DueDate          date        not null,
-    ReturnDate       date        null,
-    RenewalCount     tinyint     not null default 0,
-    CreatedDateTime  datetime    not null,
-    CreatedBy        varchar(50) not null,
-    ModifiedDateTime datetime    null,
-    ModifiedBy       varchar(50) null,
-    constraint pk_Loans primary key (LoanId),
-    constraint fk_Loans_ItemId foreign key (ItemId)
-        references Items (ItemId),
-    constraint fk_Loans_PatronId foreign key (PatronId)
-        references Patron (PatronId)
+    LoanId           BIGINT IDENTITY (1,1),
+    ItemId           BIGINT      NOT NULL,
+    PatronId         BIGINT      NOT NULL,
+    CheckoutDateTime DATETIME    NOT NULL,
+    DueDate          DATE        NOT NULL,
+    ReturnDate       DATE        NULL,
+    RenewalCount     TINYINT     NOT NULL DEFAULT 0,
+    CreatedDateTime  DATETIME    NOT NULL,
+    CreatedBy        VARCHAR(50) NOT NULL,
+    ModifiedDateTime DATETIME    NULL,
+    ModifiedBy       VARCHAR(50) NULL,
+    CONSTRAINT pk_Loans PRIMARY KEY (LoanId),
+    CONSTRAINT fk_Loans_ItemId FOREIGN KEY (ItemId)
+        REFERENCES Items (ItemId),
+    CONSTRAINT fk_Loans_PatronId FOREIGN KEY (PatronId)
+        REFERENCES Patron (PatronId)
 );
 
-create table FeeType
+CREATE TABLE FeeType
 (
-    FeeTypeCode      char(2)     not null,
-    Name             varchar(30) not null,
-    IsActive         bit         not null,
-    InactiveDateTime datetime    null,
-    CreatedDateTime  datetime    not null,
-    CreatedBy        varchar(50) not null,
-    ModifiedDateTime datetime    null,
-    ModifiedBy       varchar(50) null,
-    constraint pk_FeeType primary key (FeeTypeCode),
-    constraint uk_FeeType_Name unique (Name)
+    FeeTypeCode      CHAR(2)     NOT NULL,
+    Name             VARCHAR(30) NOT NULL,
+    IsActive         BIT         NOT NULL,
+    InactiveDateTime DATETIME    NULL,
+    CreatedDateTime  DATETIME    NOT NULL,
+    CreatedBy        VARCHAR(50) NOT NULL,
+    ModifiedDateTime DATETIME    NULL,
+    ModifiedBy       VARCHAR(50) NULL,
+    CONSTRAINT pk_FeeType PRIMARY KEY (FeeTypeCode),
+    CONSTRAINT uk_FeeType_Name UNIQUE (Name)
 );
 
-create table PatronFees
+CREATE TABLE PatronFees
 (
-    FeeId           bigint identity (1,1),
-    PatronId        bigint        not null,
-    ItemId          bigint        not null,
-    FeeTypeCode     char(2)       not null,
-    DateAssessed    date          not null,
-    FeeAmount       numeric(4, 2) not null,
-    CreatedDateTime datetime      not null,
-    CreatedBy       varchar(50)   not null,
-    constraint pk_PatronFees primary key (FeeId),
-    constraint fk_PatronFees_PatronId foreign key (PatronId)
-        references Patron (PatronId),
-    constraint fk_PatronFees_ItemId foreign key (ItemId)
-        references Items (ItemId),
-    constraint fk_PatronFees_FeeTypeCode foreign key (FeeTypeCode)
-        references FeeType (FeeTypeCode)
+    FeeId           BIGINT IDENTITY (1,1),
+    PatronId        BIGINT        NOT NULL,
+    ItemId          BIGINT        NOT NULL,
+    FeeTypeCode     CHAR(2)       NOT NULL,
+    DateAssessed    DATE          NOT NULL,
+    FeeAmount       NUMERIC(4, 2) NOT NULL,
+    CreatedDateTime DATETIME      NOT NULL,
+    CreatedBy       VARCHAR(50)   NOT NULL,
+    CONSTRAINT pk_PatronFees PRIMARY KEY (FeeId),
+    CONSTRAINT fk_PatronFees_PatronId FOREIGN KEY (PatronId)
+        REFERENCES Patron (PatronId),
+    CONSTRAINT fk_PatronFees_ItemId FOREIGN KEY (ItemId)
+        REFERENCES Items (ItemId),
+    CONSTRAINT fk_PatronFees_FeeTypeCode FOREIGN KEY (FeeTypeCode)
+        REFERENCES FeeType (FeeTypeCode)
 );
 
-create table PaymentMethod
+CREATE TABLE PaymentMethod
 (
-    PaymentMethodId  tinyint identity (1,1),
-    Name             varchar(30) not null,
-    IsActive         bit         not null,
-    InactiveDateTime datetime    null,
-    CreatedDateTime  datetime    not null,
-    CreatedBy        varchar(50) not null,
-    ModifiedDateTime datetime    null,
-    ModifiedBy       varchar(50) null,
-    constraint pk_PaymentMethod primary key (PaymentMethodId),
-    constraint uk_PaymentMethod_Name unique (Name)
+    PaymentMethodId  TINYINT IDENTITY (1,1),
+    Name             VARCHAR(30) NOT NULL,
+    IsActive         BIT         NOT NULL,
+    InactiveDateTime DATETIME    NULL,
+    CreatedDateTime  DATETIME    NOT NULL,
+    CreatedBy        VARCHAR(50) NOT NULL,
+    ModifiedDateTime DATETIME    NULL,
+    ModifiedBy       VARCHAR(50) NULL,
+    CONSTRAINT pk_PaymentMethod PRIMARY KEY (PaymentMethodId),
+    CONSTRAINT uk_PaymentMethod_Name UNIQUE (Name)
 );
 
-create table Payments
+CREATE TABLE Payments
 (
-    PaymentId       int identity (1,1),
-    PatronId        bigint        not null,
-    DatePaid        date          not null,
-    AmountPaid      numeric(5, 2) not null,
-    PaymentMethodId tinyint       not null,
-    CreatedDateTime datetime      not null,
-    CreatedBy       varchar(50)   not null,
-    constraint pk_Payments primary key (PaymentId),
-    constraint fk_Payments_PatronId foreign key (PatronId)
-        references Patron (PatronId),
-    constraint fk_Payments_PaymentMethodId foreign key (PaymentMethodId)
-        references PaymentMethod (PaymentMethodId),
-    constraint ck_Payments_AmountPaid check (AmountPaid > 0)
+    PaymentId       INT IDENTITY (1,1),
+    PatronId        BIGINT        NOT NULL,
+    DatePaid        DATE          NOT NULL,
+    AmountPaid      NUMERIC(5, 2) NOT NULL,
+    PaymentMethodId TINYINT       NOT NULL,
+    CreatedDateTime DATETIME      NOT NULL,
+    CreatedBy       VARCHAR(50)   NOT NULL,
+    CONSTRAINT pk_Payments PRIMARY KEY (PaymentId),
+    CONSTRAINT fk_Payments_PatronId FOREIGN KEY (PatronId)
+        REFERENCES Patron (PatronId),
+    CONSTRAINT fk_Payments_PaymentMethodId FOREIGN KEY (PaymentMethodId)
+        REFERENCES PaymentMethod (PaymentMethodId),
+    CONSTRAINT ck_Payments_AmountPaid CHECK (AmountPaid > 0)
 );
 
-create table FeePayments
+CREATE TABLE FeePayments
 (
-    FeePaymentId    bigint identity (1,1),
-    PaymentId       int         not null,
-    FeeId           bigint      not null,
-    PaymentAmount   numeric(5, 2),
-    CreatedDateTime datetime    not null,
-    CreatedBy       varchar(50) not null,
-    constraint pk_FeePayments primary key (FeePaymentId),
-    constraint fk_FeePayments_PaymentId foreign key (PaymentId)
-        references Payments (PaymentId),
-    constraint fk_FeePayments_FeeId foreign key (FeeId)
-        references PatronFees (FeeId)
+    FeePaymentId    BIGINT IDENTITY (1,1),
+    PaymentId       INT         NOT NULL,
+    FeeId           BIGINT      NOT NULL,
+    PaymentAmount   NUMERIC(5, 2),
+    CreatedDateTime DATETIME    NOT NULL,
+    CreatedBy       VARCHAR(50) NOT NULL,
+    CONSTRAINT pk_FeePayments PRIMARY KEY (FeePaymentId),
+    CONSTRAINT fk_FeePayments_PaymentId FOREIGN KEY (PaymentId)
+        REFERENCES Payments (PaymentId),
+    CONSTRAINT fk_FeePayments_FeeId FOREIGN KEY (FeeId)
+        REFERENCES PatronFees (FeeId)
 );
 
-create table Configuration
+CREATE TABLE Configuration
 (
-    ConfigurationId  smallint identity (1,1),
-    Name             varchar(30)  not null,
-    Description      varchar(100) not null,
-    Value            varchar(20)  not null,
-    CreatedDateTime  datetime     not null,
-    CreatedBy        varchar(50)  not null,
-    ModifiedDateTime datetime     null,
-    ModifiedBy       varchar(50)  null
+    ConfigurationId  SMALLINT IDENTITY (1,1),
+    Name             VARCHAR(30)  NOT NULL,
+    Description      VARCHAR(100) NOT NULL,
+    Value            VARCHAR(20)  NOT NULL,
+    CreatedDateTime  DATETIME     NOT NULL,
+    CreatedBy        VARCHAR(50)  NOT NULL,
+    ModifiedDateTime DATETIME     NULL,
+    ModifiedBy       VARCHAR(50)  NULL
 );
