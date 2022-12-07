@@ -206,3 +206,40 @@ ALTER TABLE RentalVehicles
 CREATE UNIQUE CLUSTERED INDEX
     IX_RentalVehicles_RentalId_VehicleId
     ON RentalVehicles (RentalId, VehicleId)
+
+-- Foreign key indexes
+
+CREATE INDEX IX_Reservation_CustomerId
+    ON Reservation (CustomerId)
+
+CREATE INDEX IX_Vehicles_CurrentLocation
+    ON Vehicles (CurrentLocation)
+
+CREATE INDEX IX_Payment_RentalId
+    ON Payment (RentalId)
+
+-- Columnstore indexes
+
+CREATE COLUMNSTORE INDEX IX_Payment_PaymentType
+    ON Payment (PaymentType)
+
+CREATE COLUMNSTORE INDEX IX_Vehicles_FuelType
+    ON Vehicles (FuelType)
+
+-- Common query indexes
+
+CREATE INDEX IX_Customers_Name
+    ON Customers (LastName, FirstName)
+
+CREATE INDEX IX_Employees_Name
+    ON Employees (LastName, FirstName)
+
+CREATE INDEX IX_Reservations_ReservationDate
+    ON Reservation (ReservationDateTime, CustomerId, PickupLocationId)
+
+CREATE INDEX IX_Rentals_RentalsNotReturned
+    ON Rentals (CustomerId, RentalDate)
+    WHERE (ReturnDate IS NULL)
+
+CREATE INDEX IX_Vehicles_VehiclesByMakeModel
+    ON Vehicles (Vin, Make, Model, LicensePlate)
