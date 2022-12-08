@@ -243,3 +243,41 @@ CREATE INDEX IX_Rentals_RentalsNotReturned
 
 CREATE INDEX IX_Vehicles_VehiclesByMakeModel
     ON Vehicles (Vin, Make, Model, LicensePlate)
+
+/* Partitioning */
+
+CREATE PARTITION FUNCTION pf_Rentals(DATETIME)
+    AS RANGE RIGHT FOR VALUES ('1/1/2022', '1/1/2023')
+
+CREATE PARTITION SCHEME ps_Rentals
+    AS PARTITION pf_Rentals
+    TO ([Primary], RentalsAndReservations, [Primary])
+
+ALTER TABLE Rentals
+    DROP CONSTRAINT pk_Rentals
+
+ALTER TABLE Rentals
+    ADD CONSTRAINT pk_Rentals PRIMARY KEY CLUSTERED
+        (
+         RentalId ASC,
+         RentalDate ASC
+        )
+        ON ps_Rentals(RentalDate)
+
+CREATE PARTITION FUNCTION pf_Reservations(DATETIME)
+    AS RANGE RIGHT FOR VALUES ('1/1/2022', '1/1/2023')
+
+CREATE PARTITION SCHEME ps_Reservations
+    AS PARTITION pf_Reservations
+    TO ([Primary], RentalsAndReservations, [Primary])
+
+ALTER TABLE Reservation
+    DROP CONSTRAINT pk_Reservations
+
+ALTER TABLE Reservation
+    ADD CONSTRAINT pk_Reservations PRIMARY KEY CLUSTERED
+        (
+         ReservationId ASC,
+         ReservationDateTime ASC
+        )
+        ON ps_Reservations(ReservationDateTime)
